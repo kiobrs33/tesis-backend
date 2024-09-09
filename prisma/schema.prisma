@@ -1,0 +1,209 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id         Int               @id @default(autoincrement())
+  firstname       String
+  lastname        String
+  age             Int               @default(1)
+  email           String            @unique
+  password        String
+  type            TypeUser
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  Download        Download[]
+  SentGifts       Gift[]            @relation("SentGifts")
+  ReceivedGifts   Gift[]            @relation("ReceivedGifts")
+  Ratings         Ratings[]
+  DownloadHistory DownloadHistory[]
+  OrderBalance    OrderBalance[]
+
+  @@map("users")
+}
+
+enum TypeUser {
+  CLIENT
+  ADMIN
+}
+
+model Category {
+  category_id Int                    @id @default(autoincrement())
+  name        String
+  created_at  DateTime               @default(now())
+  updated_at  DateTime               @updatedAt
+  contents    ContentsOnCategories[]
+
+  @@map("categories")
+}
+
+model Content {
+  content_id           Int                    @id @default(autoincrement())
+  name                 String
+  author               String
+  description          String
+  price                Float
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  categories           ContentsOnCategories[]
+  PromotionsOnContents PromotionsOnContents[]
+  Download             Download[]
+  Gift                 Gift[]
+  Ratings              Ratings[]
+  DownloadHistory      DownloadHistory[]
+  Ranking              Ranking[]
+
+  @@map("contents")
+}
+
+model ContentsOnCategories {
+  category    Category @relation(fields: [category_id], references: [category_id])
+  category_id Int
+  content     Content  @relation(fields: [content_id], references: [content_id])
+  content_id  Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@id([category_id, content_id])
+  @@map("contents_on_categories")
+}
+
+model FileType {
+  file_type_id Int      @id @default(autoincrement())
+  name         String
+  extension    String
+  mime_type    String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("file_types")
+}
+
+model Promotion {
+  promotion_id         Int                    @id @default(autoincrement())
+  name                 String
+  discount             Float
+  start_date           DateTime
+  final_date           DateTime
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  PromotionsOnContents PromotionsOnContents[]
+
+  @@map("promotions")
+}
+
+model PromotionsOnContents {
+  promotion    Promotion @relation(fields: [promotion_id], references: [promotion_id])
+  promotion_id Int
+  content      Content   @relation(fields: [content_id], references: [content_id])
+  content_id   Int
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  @@id([promotion_id, content_id])
+  @@map("promotions_on_contents")
+}
+
+model Download {
+  download_id   Int      @id @default(autoincrement())
+  download_date DateTime
+  user          User     @relation(fields: [user_id], references: [user_id])
+  user_id       Int
+  content       Content  @relation(fields: [content_id], references: [content_id])
+  content_id    Int
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("downloads")
+}
+
+model Gift {
+  gift_id          Int      @id @default(autoincrement())
+  gift_date        DateTime
+  sent_user        User     @relation("SentGifts", fields: [sent_user_id], references: [user_id])
+  sent_user_id     Int
+  received_user    User     @relation("ReceivedGifts", fields: [received_user_id], references: [user_id])
+  received_user_id Int
+  content          Content  @relation(fields: [content_id], references: [content_id])
+  content_id       Int
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("gifts")
+}
+
+model Ratings {
+  rating_id   Int      @id @default(autoincrement())
+  position    Int
+  week        Int
+  score       Int // Observacion
+  rating_date DateTime
+  user        User     @relation(fields: [user_id], references: [user_id])
+  user_id     Int
+  content     Content  @relation(fields: [content_id], references: [content_id])
+  content_id  Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("ratings")
+}
+
+model DownloadHistory {
+  download_history_id Int      @id @default(autoincrement())
+  download_date       DateTime
+  user                User     @relation(fields: [user_id], references: [user_id])
+  user_id             Int
+  content             Content  @relation(fields: [content_id], references: [content_id])
+  content_id          Int
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@map("download_history")
+}
+
+model Ranking {
+  raking_id  Int      @id @default(autoincrement())
+  position   Int
+  week       Int
+  content    Content  @relation(fields: [content_id], references: [content_id])
+  content_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("rankigs")
+}
+
+enum TypeRanking {
+  DOWNLOAD
+  RATING
+}
+
+model OrderBalance {
+  order_balance_id Int        @id @default(autoincrement())
+  request_balance  Float
+  state_order      StateOrder
+  order_data       DateTime
+  user             User       @relation(fields: [user_id], references: [user_id])
+  user_id          Int
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+
+  @@map("orders_balances")
+}
+
+enum StateOrder {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
