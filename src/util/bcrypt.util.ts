@@ -10,4 +10,6 @@ export class BcryptUtil {
   public compare = async (oldText: string, hashText: string) => {
     return await bcrypt.compare(oldText, hashText);
   };
+
+  //TODO : Agregar funcionalidad para ver contraseñas
 }

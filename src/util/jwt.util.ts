@@ -16,7 +16,7 @@ export class JwtUtil {
         payload,
         secret,
         {
-          expiresIn: '24h',
+          expiresIn: '168h',
         },
         (err, token) => {
           if (err) {
