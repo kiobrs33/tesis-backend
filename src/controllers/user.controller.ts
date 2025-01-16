@@ -2,20 +2,19 @@ import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../services/user.service';
 import { paginate } from '../util/paginate.util';
 import { BcryptUtil } from '../util/bcrypt.util';
-import { JwtUtil } from '../util/jwt.util';
+import { IQuerysUser, IParamsUser, IUser } from '../interfaces/user.interface';
 
 export class UserController {
   private _userService: UserService;
   private _bcryptUtil: BcryptUtil;
-  private _jwtUtil: JwtUtil;
 
   constructor() {
     this._userService = new UserService();
     this._bcryptUtil = new BcryptUtil();
-    this._jwtUtil = new JwtUtil();
 
     // Permite referenciar y mantener el contexto de la instancia del objeto "ContentController"
     // Evita que "this._contentService" no sea undefined y se pueda invocar esta variable
+    // OBSERVACIÓN:Para evitar este codigo, se puede usar "Arrow Functions" que soluciona este problema
     this.getUsers = this.getUsers.bind(this);
     this.getOneUser = this.getOneUser.bind(this);
     this.createUser = this.createUser.bind(this);
@@ -23,7 +22,12 @@ export class UserController {
     this.deleteUser = this.deleteUser.bind(this);
   }
 
-  public async getUsers(req: Request, res: Response, next: NextFunction) {
+  // Request<ParamsDictionary, ResBody, ReqBody, ReqQuery>
+  public async getUsers(
+    req: Request<{}, {}, {}, IQuerysUser>,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       let { take, page } = req.query;
       const totalItems = await this._userService.getCountUsers();
@@ -37,7 +41,8 @@ export class UserController {
 
         const users = await this._userService.getUsers(skipVal, takeVal);
 
-        return res.status(200).json({
+        res.status(200).json({
+          ok: true,
           status: 'success',
           message: 'Lista de users',
           data: {
@@ -50,11 +55,13 @@ export class UserController {
             items: users,
           },
         });
+        return;
       }
 
       const users = await this._userService.getAllUsers();
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Lista de users',
         data: {
@@ -67,19 +74,27 @@ export class UserController {
     }
   }
 
-  public async getOneUser(req: Request, res: Response, next: NextFunction) {
+  public async getOneUser(
+    req: Request<IParamsUser, {}, {}, {}>,
+    // req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { id } = req.params;
       const user = await this._userService.getOneUser(Number(id));
 
       if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'User no encontrado',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'User encontrado',
         data: {
@@ -91,26 +106,27 @@ export class UserController {
     }
   }
 
-  public async createUser(req: Request, res: Response, next: NextFunction) {
+  public async createUser(
+    req: Request<{}, {}, IUser, {}>,
+    // req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const body = req.body;
 
-      // Encriptando Password
+      // Encriptando la contraseña
       const hashPassword = await this._bcryptUtil.encrypt(body.password);
       body.password = hashPassword;
 
       const user = await this._userService.createUser(body);
 
-      // Generar el JWT
-      const userId = String(user.user_id);
-      const token = await this._jwtUtil.generateJwt(userId);
-
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'User creado.',
         data: {
           user,
-          token,
         },
       });
     } catch (error: any) {
@@ -118,13 +134,17 @@ export class UserController {
     }
   }
 
-  public async updateUser(req: Request, res: Response, next: NextFunction) {
+  public async updateUser(
+    req: Request<IParamsUser, {}, IUser, {}>,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { id } = req.params;
       const body = req.body;
 
       if (body.password) {
-        // Encriptando Password
+        // Encriptando la contraseña
         const hashPassword = await this._bcryptUtil.encrypt(body.password);
         body.password = hashPassword;
       }
@@ -132,13 +152,16 @@ export class UserController {
       const user = await this._userService.updateUser(Number(id), body);
 
       if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'User no encontrado',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'User actualizado',
         data: {
@@ -150,20 +173,27 @@ export class UserController {
     }
   }
 
-  public async deleteUser(req: Request, res: Response, next: NextFunction) {
+  public async deleteUser(
+    req: Request<IParamsUser, {}, {}, {}>,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { id } = req.params;
 
       const user = await this._userService.deleteUser(Number(id));
 
       if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'User no encontrado',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'User eliminado',
         data: {

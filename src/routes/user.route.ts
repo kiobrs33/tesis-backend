@@ -1,5 +1,4 @@
 import { Router } from 'express';
-
 import {
   validateCreateUser,
   validateIdUser,
@@ -14,16 +13,54 @@ const router = Router();
 const userController = new UserController();
 
 router.get(
+  // Ruta
   '/',
-  // [validateJwt, ...validatePaginationUsers, ...validateIdUser],
+  // Middlewares
   validateJwt,
   checkRol(['ADMIN']),
   validatePaginationUsers,
+  // Función que se ejecutará para esta ruta
   userController.getUsers
 );
-router.get('/:id', [...validateIdUser], userController.getOneUser);
-router.post('/', [...validateCreateUser], userController.createUser);
-router.put('/:id', [...validateUpdateUser], userController.updateUser);
-router.delete('/:id', [...validateIdUser], userController.deleteUser);
+router.get(
+  // Ruta
+  '/:id',
+  // Middlewares
+  validateJwt,
+  checkRol(['ADMIN']),
+  validateIdUser,
+  // Función que se ejecutará para esta ruta
+  userController.getOneUser
+);
+router.post(
+  // Ruta
+  '/',
+  // Middlewares
+  validateJwt,
+  checkRol(['ADMIN']),
+  validateCreateUser,
+  // Función que se ejecutará para esta ruta
+  userController.createUser
+);
+router.put(
+  // Ruta
+  '/:id',
+  // Middlewares
+  validateJwt,
+  checkRol(['ADMIN']),
+  validateUpdateUser,
+  // Función que se ejecutará para esta ruta
+  userController.updateUser
+);
+router.delete(
+  // Ruta
+  '/:id',
+  // Middlewares
+  validateJwt,
+  checkRol(['ADMIN']),
+  validateIdUser,
+  // Función que se ejecutará para esta ruta
+  userController.deleteUser
+);
 
 export const UserRouter = router;

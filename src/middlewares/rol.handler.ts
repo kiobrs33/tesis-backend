@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { SessionRequest } from '../interfaces/session.interface';
-import { TypeUser } from '@prisma/client';
+// import { TypeUser } from '@prisma/client';
 
 export const checkRol =
   (rol: string[]) =>
@@ -9,8 +9,8 @@ export const checkRol =
       const { user } = req;
       const roleUser = user.type;
 
-      console.log('here guy!');
-      console.log(TypeUser);
+      // console.log('Check Rol!');
+      // console.log(TypeUser);
 
       next();
     } catch (error: any) {

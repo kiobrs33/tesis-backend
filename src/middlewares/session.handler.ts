@@ -11,10 +11,12 @@ export const validateJwt = async (
   try {
     // Evaluando el authorization
     if (!req.headers.authorization) {
-      return res.status(400).json({
+      res.status(400).json({
+        ok: false,
         status: 'error',
         message: 'No tienes autorizacion para esta URL.',
       });
+      return;
     }
 
     // Beaber Token
@@ -24,18 +26,18 @@ export const validateJwt = async (
 
     // Evaluando el ID del usuario
     if (!valueToken.userId) {
-      return res.status(400).json({
+      res.status(400).json({
+        ok: false,
         status: 'error',
         message: 'No se puede obtener userId token.',
       });
+      return;
     }
 
     const userService = new UserService();
     const user = await userService.getOneUser(Number(valueToken.userId));
 
     req.user = user;
-    console.log('User Logged!');
-    console.log(user);
 
     next();
   } catch (error: any) {

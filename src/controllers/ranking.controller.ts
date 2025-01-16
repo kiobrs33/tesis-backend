@@ -30,7 +30,8 @@ export class RankingController {
           takeVal
         );
 
-        return res.status(200).json({
+        res.status(200).json({
+          ok: true,
           status: 'success',
           message: 'Lista de rankings.',
           data: {
@@ -43,10 +44,12 @@ export class RankingController {
             items: rankings,
           },
         });
+        return;
       }
 
       const rankings = await this._rankingService.getAllRankings();
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Lista de rankings.',
         data: {
@@ -69,13 +72,16 @@ export class RankingController {
       const ranking = await this._rankingService.getOneRanking(Number(id));
 
       if (!ranking) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Ranking no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Ranking encontrado.',
         data: {
@@ -97,6 +103,7 @@ export class RankingController {
       const newRanking = await this._rankingService.createRanking(body);
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Ranking creado.',
         data: {
@@ -123,13 +130,16 @@ export class RankingController {
       );
 
       if (!ranking) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Ranking no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Ranking actualizado.',
         data: {
@@ -151,13 +161,16 @@ export class RankingController {
       const ranking = await this._rankingService.deleteRanking(Number(id));
 
       if (!ranking) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Ranking no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Ranking eliminado',
         data: {

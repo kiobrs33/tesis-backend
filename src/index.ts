@@ -17,8 +17,8 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas de la app
-app.use('/user', UserRouter);
 app.use('/auth', AuthRoute);
+app.use('/user', UserRouter);
 app.use('/content', ContentRouter);
 app.use('/category', CategoryRouter);
 app.use('/ranking', RankingRouter);

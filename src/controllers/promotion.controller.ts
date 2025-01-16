@@ -29,7 +29,8 @@ export class PromotionController {
           skipVal,
           takeVal
         );
-        return res.status(200).json({
+        res.status(200).json({
+          ok: true,
           status: 'success',
           message: 'Lista de promotions.',
           data: {
@@ -42,10 +43,12 @@ export class PromotionController {
             items: promotions,
           },
         });
+        return;
       }
 
       const promotions = await this._promotionService.getAllPromotions();
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Lista de promotions.',
         data: {
@@ -70,13 +73,16 @@ export class PromotionController {
       );
 
       if (!promotion) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Promotion no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Promotion encontrado.',
         data: {
@@ -98,6 +104,7 @@ export class PromotionController {
       const newPromotion = await this._promotionService.createPromotion(body);
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Promotion creado.',
         data: {
@@ -124,13 +131,16 @@ export class PromotionController {
       );
 
       if (!promotion) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Promotion no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Promotion actualizado.',
         data: {
@@ -154,13 +164,16 @@ export class PromotionController {
       );
 
       if (!promotion) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Promotion no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Promotion eliminado',
         data: {

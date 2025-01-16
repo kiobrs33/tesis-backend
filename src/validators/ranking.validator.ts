@@ -12,7 +12,7 @@ export const validateCreateRanking = [
     .if(check('content_id').exists())
     .custom(async (value) => {
       const content = await contentService.getOneContent(value);
-      console.log(content);
+
       if (!content) {
         throw new Error('El content_id del content no existe.');
       }
@@ -39,7 +39,7 @@ export const validateUpdateRanking = [
     .if(check('content_id').exists())
     .custom(async (value) => {
       const content = await contentService.getOneContent(value);
-      console.log(content);
+
       if (!content) {
         throw new Error('El content_id del content no existe.');
       }

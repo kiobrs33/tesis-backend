@@ -1,4 +1,5 @@
 import { PrismaClient, User } from '@prisma/client';
+import { IUser } from '../interfaces/user.interface';
 
 const prisma = new PrismaClient();
 
@@ -32,43 +33,39 @@ export class UserService {
     return count;
   }
 
-  public async createUser(data: User): Promise<User> {
+  public async createUser(userData: IUser): Promise<User> {
     const user = await prisma.user.create({
-      data: {
-        firstname: data.firstname,
-        lastname: data.lastname,
-        age: data.age,
-        email: data.email,
-        password: data.password,
-        type: data.type,
-      },
+      data: userData,
     });
     return user;
   }
 
-  public async updateUser(id: number, data: User): Promise<User | null> {
+  public async updateUser(
+    userId: number,
+    userData: IUser
+  ): Promise<User | null> {
     const user = await prisma.user.update({
       where: {
-        user_id: id,
+        user_id: userId,
       },
-      data,
+      data: userData,
     });
     return user;
   }
 
-  public async deleteUser(id: number): Promise<User> {
+  public async deleteUser(userId: number): Promise<User> {
     const user = await prisma.user.delete({
       where: {
-        user_id: id,
+        user_id: userId,
       },
     });
     return user;
   }
 
-  public async verifyEmailUser(email: string): Promise<User | null> {
+  public async verifyEmailUser(userEmail: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: {
-        email: email,
+        email: userEmail,
       },
     });
     return user;

@@ -29,7 +29,8 @@ export class CategoryController {
           skipVal,
           takeVal
         );
-        return res.status(200).json({
+        res.status(200).json({
+          ok: true,
           status: 'success',
           message: 'Lista de categories.',
           data: {
@@ -42,10 +43,12 @@ export class CategoryController {
             items: categories,
           },
         });
+        return;
       }
 
       const categories = await this._categoryService.getAllCategories();
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Lista de categories.',
         data: {
@@ -68,13 +71,16 @@ export class CategoryController {
       const category = await this._categoryService.getOneCategory(Number(id));
 
       if (!category) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Categorie no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Categorie encontrado.',
         data: {
@@ -96,6 +102,7 @@ export class CategoryController {
       const newCategory = await this._categoryService.createCategory(body);
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Category creado.',
         data: {
@@ -122,13 +129,16 @@ export class CategoryController {
       );
 
       if (!category) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Category no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Category actualizado.',
         data: {
@@ -150,13 +160,16 @@ export class CategoryController {
       const category = await this._categoryService.deleteCategory(Number(id));
 
       if (!category) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Category no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Category eliminado',
         data: {

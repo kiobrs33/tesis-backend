@@ -29,7 +29,8 @@ export class ContentController {
           skipVal,
           takeVal
         );
-        return res.status(200).json({
+        res.status(200).json({
+          ok: true,
           status: 'success',
           message: 'Lista de contents.',
           data: {
@@ -42,10 +43,12 @@ export class ContentController {
             items: contents,
           },
         });
+        return;
       }
 
       const contents = await this._contentService.getAllContents();
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Lista de contents.',
         data: {
@@ -68,13 +71,16 @@ export class ContentController {
       const content = await this._contentService.getOneContent(Number(id));
 
       if (!content) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Content no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Content encontrado.',
         data: {
@@ -96,6 +102,7 @@ export class ContentController {
       const newContent = await this._contentService.createContent(body);
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Content creado.',
         data: {
@@ -129,13 +136,16 @@ export class ContentController {
       });
 
       if (!content) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Content no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Content actualizado.',
         data: {
@@ -155,20 +165,19 @@ export class ContentController {
     try {
       const { id } = req.params;
 
-      // const pi = await this._contentService.deleteCategoriesFromContent(
-      //   Number(id)
-      // );
-      // console.log(pi);
       const content = await this._contentService.deleteContent(Number(id));
 
       if (!content) {
-        return res.status(404).json({
+        res.status(404).json({
+          ok: false,
           status: 'error',
           message: 'Content no encontrado.',
         });
+        return;
       }
 
       res.status(200).json({
+        ok: true,
         status: 'success',
         message: 'Content eliminado',
         data: {
