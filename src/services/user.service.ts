@@ -48,6 +48,7 @@ export class UserService {
       where: {
         user_id: userId,
       },
+      
       data: userData,
     });
     return user;
@@ -69,5 +70,14 @@ export class UserService {
       },
     });
     return user;
+  }
+
+  public async countEmailOccurrences(userEmail: string): Promise<number> {
+    const count = await prisma.user.count({
+      where: {
+        email: userEmail,
+      },
+    });
+    return count;
   }
 }

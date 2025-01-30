@@ -78,11 +78,17 @@ export const validateUpdateUser = [
   check('email', 'El email es inválido').if(check('email').exists()).isEmail(),
   check('email')
     .if(check('email').exists())
-    .custom(async (value) => {
+    .custom(async (value, { req }) => {
       const user = await userService.verifyEmailUser(value);
-      if (user) {
-        throw new Error('El email ya existe');
+      console.log('RATA', user, req.params?.id);
+      // Si el correo ya existe y pertenece a otro usuario, lanzar error
+      console.log(req.params?.id);
+      if (user?.user_id != req.params?.id) {
+        throw new Error('El email ya está en uso por otro usuario.');
       }
+      // if (user) {
+      //   throw new Error('El email ya existe');
+      // }
       return true;
     }),
   check('password', 'El password es requerido')

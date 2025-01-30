@@ -8,6 +8,7 @@ import { CategoryRouter } from './routes/category.route';
 import { RankingRouter } from './routes/ranking.route';
 import { PromotionRouter } from './routes/promotion.route';
 import { errorHandler } from './middlewares/error.handler';
+import { prismaErrorHandler } from './middlewares/prismaErrorHandler';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -23,6 +24,9 @@ app.use('/content', ContentRouter);
 app.use('/category', CategoryRouter);
 app.use('/ranking', RankingRouter);
 app.use('/promotion', PromotionRouter);
+
+// Agrega el middleware para capturar los errores de Prisma
+app.use(prismaErrorHandler);
 
 // Errores
 app.use(errorHandler);
